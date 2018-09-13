@@ -79,6 +79,7 @@ class User(UserMixin, db.Model):
 			id = jwt.decode(token, app.config['SECRET_KEY'], algorithm = ['HS256'])['reset_password']
 		except:
 			return 
+		# If the token is valid, then the value of the reset_password key from the token's payload is the ID of the user
 		return User.query.get(id)
 
 class Post(db.Model):
