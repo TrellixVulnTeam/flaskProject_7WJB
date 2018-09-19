@@ -1,4 +1,5 @@
 from flask import Flask
+from flask import request
 from config import Config
 from flask_sqlalchemy import SQLAlchemy  #ORM
 from flask_migrate import Migrate
@@ -9,6 +10,8 @@ import os
 from flask_mail import Mail
 from flask_bootstrap import Bootstrap
 from flask_moment import Moment
+from flask_babel import Babel
+
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -19,6 +22,8 @@ login.login_view = 'login'
 mail = Mail(app)
 bootstrap = Bootstrap(app)
 moment = Moment(app)
+babel = Babel(app)
+
 
 # only enable the email logger when the app is running without debug mode
 if not app.debug:
@@ -50,5 +55,12 @@ if not app.debug:
     app.logger.setLevel(logging.INFO)
     app.logger.info('Microblog startup')
 
+
+
+# invoked for each request to select a language translation to use for that request
+@babel.localeselector
+def get_locate():
+    return request.accept_languages.best_match(app.config['LANGUAGES'])
+
 # models will define the structure of the database
-from app import routes, models, errors 
+from app import routes, models, errors
